@@ -1,0 +1,54 @@
+Auri - A way to set up static Arch Linux machines
+
+
+What is Auri?
+
+Auri is a software package specifically developed for Arch Linux. It allows to
+boot complete setups from read-only filesystems, thus making them static.
+
+
+When is Auri useful?
+
+Blocking all write operations to the underlying devices by using read-only
+filesystems can be of advantage in several scenarios:
+
+- Single-board computers like the Raspberry Pi which utilize SD cards for
+  storage purposes are prone to data corruption and wearout. Preventing the
+  operating system from writing to disk effectively eliminates this problem.
+  
+- Embedded systems which are intended to serve a single purpose within a larger
+  device are often required to withstand power outages unharmed. Read-only
+  filesystems provide a fresh installation at the beginning of each power cycle.
+  
+- Generic setups can benefit from the possibility of making temporary changes to
+  the system and discarding them in case something goes wrong.
+
+
+How does Auri work?
+
+Auri relies on the Linux kernel feature OverlayFS, which is an implementation of
+the Union Filesystem concept. In order to function properly, it provides an
+initial RAM filesystem that needs to be used in conjunction with the kernel.
+
+In early userspace, Auri mounts a temporary filesystem on top of the read-only
+mounted root device. This way all write operations are caught and stored in RAM
+until the system shuts down.
+
+
+How can Auri be installed?
+
+Auri is available on the Arch Linux User Repository and can be installed either
+manually or using the AUR helper of choice.
+
+
+How can Auri be activated?
+
+In order to use Auri, an initial RAM filesystem with the hook 'auri' needs to be
+generated and enabled in the kernel command line. Visit the Arch Linux Wiki for
+further reference.
+
+
+Is Auri free software?
+
+Free use of Auri is granted under the terms of the GNU General Public License,
+version 3. See LICENSE for more information.
