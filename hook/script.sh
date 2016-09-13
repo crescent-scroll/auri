@@ -17,26 +17,43 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 run_hook() {
-    poll_device "$(resolve_device $root)" 10
-    mount_handler=mount_root
+    auri_mount_handler() {
+        rwopt=ro default_mount_handler "$1"
+        
+        fsck_root() {
+            echo &> /dev/null
+        }
+    }
+    
+    mount_handler=auri_mount_handler
 }
 
-fsck_root() {
-    echo &> /dev/null
-}
-
-mount_root() {
-    local device=$(resolve_device "$root") surface="$1"
+run_latehook() {
+    local root=/new_root
     
     local core=/mnt/auri/core shell=/mnt/auri/shell
     
-    mount -t auto -o ro "$device" "$core"
-    mount -t tmpfs auri "$shell"
+    mount --move "$root" "$core"
+    mount -t tmpfs tmpfs "$shell"
     
-    mkdir "$shell/data"
-    mkdir "$shell/work"
+    local data="$shell/data" work="$shell/work"
+    
+    mkdir -p "$data"
+    mkdir -p "$work"
     
     mount -t overlay \
-        -o "lowerdir=$core,upperdir=$shell/data,workdir=$shell/work" \
-        auri "$surface"
+        -o "lowerdir=$core,upperdir=$data,workdir=$work" \
+        auri "$root"
+    
+    mkdir -p "$root/$core"
+    mkdir -p "$root/$shell"
+    
+    mount --bind "$core" "$root/$core"
+    mount --bind "$data" "$root/$shell"
+    
+    local log="$root/var/log"
+    
+    mkdir -p "$log"
+    
+    mount > "$log/auri.log"
 }
