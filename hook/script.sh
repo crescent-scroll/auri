@@ -1,7 +1,7 @@
 #!/bin/ash
 
 # Auri - A way to set up static Arch Linux machines
-# Copyright (C) 2016 Crescent Scroll
+# Copyright (C) 2016-2017 Crescent Scroll
 # 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
