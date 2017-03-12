@@ -18,42 +18,22 @@
 
 run_hook() {
     auri_mount_handler() {
-        rwopt=ro default_mount_handler "$1"
-        
-        fsck_root() {
-            echo &> /dev/null
-        }
+        if [ "$(auri query root type)" = "read-only" ]; then
+            rwopt="ro" default_mount_handler "$1"
+        else
+            rwopt="rw" default_mount_handler "$1"
+        fi
     }
     
-    mount_handler=auri_mount_handler
+    mount_handler="auri_mount_handler"
+    
+    if [ "$(auri query root type)" = "read-only" ]; then
+        fsck_root() {
+            echo &> "/dev/null"
+        }
+    fi
 }
 
 run_latehook() {
-    local root=/new_root
-    
-    local core=/mnt/auri/core shell=/mnt/auri/shell
-    
-    mount --move "$root" "$core"
-    mount -t tmpfs tmpfs "$shell"
-    
-    local data="$shell/data" work="$shell/work"
-    
-    mkdir -p "$data"
-    mkdir -p "$work"
-    
-    mount -t overlay \
-        -o "lowerdir=$core,upperdir=$data,workdir=$work" \
-        auri "$root"
-    
-    mkdir -p "$root/$core"
-    mkdir -p "$root/$shell"
-    
-    mount --bind "$core" "$root/$core"
-    mount --bind "$data" "$root/$shell"
-    
-    local log="$root/var/log"
-    
-    mkdir -p "$log"
-    
-    mount > "$log/auri.log"
+    auri setup
 }
