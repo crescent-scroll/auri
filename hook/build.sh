@@ -21,7 +21,7 @@ build() {
     
     if ! auri configuration --plain > "$configuration"; then
         error "Device configuration failed"
-        exit "$?"
+        exit $?
     fi
     
     add_file "$configuration" "/etc/auri"
@@ -32,7 +32,7 @@ build() {
     local modules
     if ! modules="$(auri configuration --modules)"; then
         error "Module configuration failed"
-        exit "$?"
+        exit $?
     fi
     
     for module in "overlay" $modules; do
