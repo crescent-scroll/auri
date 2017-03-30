@@ -17,13 +17,33 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 build() {
-    add_dir /mnt/auri/core
-    add_dir /mnt/auri/shell
+    local configuration="$(mktemp)"
+    
+    if ! auri configuration --plain > "$configuration"; then
+        error "Device configuration failed"
+        exit $?
+    fi
+    
+    add_file "$configuration" "/etc/auri"
+    rm "$configuration"
+    
+    add_file "/usr/lib/auri/script" "/usr/bin/auri"
+    
+    local modules
+    if ! modules="$(auri configuration --modules)"; then
+        error "Module configuration failed"
+        exit $?
+    fi
+    
+    for module in "overlay" $modules; do
+        add_module "$module"
+    done
     
     add_runscript
 }
 
 help() {
-    echo 'This hook mounts a temporary filesystem on top of the read-only' \
-        'mounted root device.'
+    echo "This hooks allows for booting off temporary filesystems by moving" \
+        "specific mount operations to early userspace and creating union" \
+        "mounts on top of read-only devices."
 }
