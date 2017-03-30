@@ -42,7 +42,7 @@ std::ostream& textual::help(std::ostream& stream)
 
 std::ostream& textual::version(std::ostream& stream)
 {
-    stream << "Auri version 0.2.0-alpha" << std::endl;
+    stream << "Auri version " << AURI_VERSION << std::endl;
     return stream;
 }
 

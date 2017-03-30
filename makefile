@@ -16,16 +16,18 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables --no-print-directory
 
-SOURCES := $(shell find source -name *.cc)
+VERSION := 0.2.0-alpha
+
+SOURCES := $(shell find source -name "*.cc")
 OBJECTS := $(patsubst source/%.cc,build/%.o,${SOURCES})
 
 auri: binary/auri
 
 binary/auri: ${OBJECTS} | binary
-	clang++ -std=c++1y -Wall -g -o $@ $^
+	clang++ -std=c++1y -Wall -g -DAURI_VERSION=\"${VERSION}\" -o $@ $^
 
 build/%.o: source/%.cc | build
-	clang++ -std=c++1y -Wall -MMD -c -o $@ $<
+	clang++ -std=c++1y -Wall -MMD -c -DAURI_VERSION=\"${VERSION}\" -o $@ $<
 
 binary build:
 	mkdir $@
