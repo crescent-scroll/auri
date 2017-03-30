@@ -17,9 +17,9 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 log="/run/log/auri"
-configuration="/etc/auri"
+layout="/etc/auri/layout"
 
-detect() { # Determine how to run the script
+detect() { # determine how to run the script
     for argument in "$@"; do
         if [ "$argument" = "--execute" ]; then
             echo "execution"
@@ -30,7 +30,7 @@ detect() { # Determine how to run the script
     echo "logging"
 }
 
-record() { # Forward and log an invocation
+record() { # forward and log an invocation
     local path="$0" arguments="$@"
     
     local output; output="$($path --execute "$@")"
@@ -57,13 +57,13 @@ if [ "$(detect "$@")" = "logging" ]; then
     record "$@"
 fi
 
-. "$configuration"
+. "$layout"
 
-resolve() { # Find the root device alias
+resolve() { # find the root device alias
     echo "$(set -- $devices && echo $1)"
 }
 
-query() { # Get a configuration value
+query() { # resolve a layout variable
     local object="$1" property="$2"
     
     if [ "$property" != "" ]; then
@@ -82,7 +82,7 @@ query() { # Get a configuration value
     echo "$value"
 }
 
-setup() { # Mount a device
+setup() { # mount a device
     local device="$1"
     
     local root="/new_root"
@@ -92,17 +92,17 @@ setup() { # Mount a device
     
     mkdir -p "$core" "$shell"
     
-    if [ "$device" = "$(resolve)" ]; then # Root has already been mounted
-        if [ "$(query $device type)" = "read-only" ]; then
+    if [ "$device" = "$(resolve)" ]; then # root has already been mounted
+        if [ "$(query $device mode)" = "read-only" ]; then
             mount --move "$root" "$core"
         else
             return
         fi
     else
-        if [ "$(query $device type)" = "read-only" ]; then
+        if [ "$(query $device mode)" = "read-only" ]; then
             local option="ro" directory="$core"
         else
-            local option="rw" directory="$root/$(query $device directory)"
+            local option="rw" directory="$root/$(query $device mount_point)"
         fi
         
         mkdir -p "$directory"
@@ -114,7 +114,7 @@ setup() { # Mount a device
             exit 5
         fi
         
-        if [ "$(query $device type)" = "read-write" ]; then
+        if [ "$(query $device mode)" = "read-write" ]; then
             return
         fi
     fi
@@ -124,7 +124,7 @@ setup() { # Mount a device
     local matter="$shell/matter" surface="$shell/surface"
     mkdir -p "$matter" "$surface"
     
-    local directory="$root/$(query $device directory)"
+    local directory="$root/$(query $device mount_point)"
     mkdir -p "$directory"
     
     mount -t "overlay" \

@@ -17,28 +17,19 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 build() {
-    local configuration="$(mktemp)"
+    local layout="$(mktemp)"
     
-    if ! auri configuration --plain > "$configuration"; then
-        error "Device configuration failed"
+    if ! auri layout --plain > "$layout"; then
+        error "Unable to generate device layout"
         exit $?
     fi
     
-    add_file "$configuration" "/etc/auri"
-    rm "$configuration"
+    add_file "$layout" "/etc/auri/layout"
+    rm "$layout"
     
     add_file "/usr/lib/auri/script" "/usr/bin/auri"
     
-    local modules
-    if ! modules="$(auri configuration --modules)"; then
-        error "Module configuration failed"
-        exit $?
-    fi
-    
-    for module in "overlay" $modules; do
-        add_module "$module"
-    done
-    
+    add_module "overlay"
     add_runscript
 }
 

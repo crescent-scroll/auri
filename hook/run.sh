@@ -18,7 +18,7 @@
 
 run_hook() {
     auri_mount_handler() {
-        if [ "$(auri query root type)" = "read-only" ]; then
+        if [ "$(auri query root mode)" = "read-only" ]; then
             rwopt="ro" default_mount_handler "$1"
         else
             rwopt="rw" default_mount_handler "$1"
@@ -27,7 +27,7 @@ run_hook() {
     
     mount_handler="auri_mount_handler"
     
-    if [ "$(auri query root type)" = "read-only" ]; then
+    if [ "$(auri query root mode)" = "read-only" ]; then
         fsck_root() {
             echo &> "/dev/null"
         }
