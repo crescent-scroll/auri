@@ -1,4 +1,4 @@
-/*  Auri - A way to set up static Arch Linux machines
+/*  Auri - A way to set up volatile Arch Linux machines
     Copyright (C) 2016-2017 Crescent Scroll
     
     This program is free software: you can redistribute it and/or modify it
@@ -187,20 +187,20 @@ namespace {
 
 layout::entry::type cast(const std::string mode)
 {
-    if (mode=="read-only") {
-        return layout::entry::type::read;
+    if (mode=="volatile") {
+        return layout::entry::type::transient;
     }
     
-    return layout::entry::type::write;
+    return layout::entry::type::persistent;
 }
 
 std::string cast(layout::entry::type mode)
 {
-    if (mode==layout::entry::type::read) {
-        return "read-only";
+    if (mode==layout::entry::type::transient) {
+        return "volatile";
     }
     
-    return "read-write";
+    return "persistent";
 }
 
 std::vector<std::string> match(const std::string& string,
@@ -300,7 +300,7 @@ std::istream& operator>>(std::istream& stream, nice& table)
         }
         
         static const std::regex expression{"[\\s]*"
-            "(read-only|read-write)" // mode
+            "(volatile|persistent)" // mode
             "[\\s]+device[\\s]+"
             "([^\\s\\:]+)" // label
             "[\\s\\:]+"

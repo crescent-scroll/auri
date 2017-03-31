@@ -1,6 +1,6 @@
 #!/bin/ash
 
-# Auri - A way to set up static Arch Linux machines
+# Auri - A way to set up volatile Arch Linux machines
 # Copyright (C) 2016-2017 Crescent Scroll
 # 
 # This program is free software: you can redistribute it and/or modify it under
@@ -93,13 +93,13 @@ setup() { # mount a device
     mkdir -p "$core" "$shell"
     
     if [ "$device" = "$(resolve)" ]; then # root has already been mounted
-        if [ "$(query $device mode)" = "read-only" ]; then
+        if [ "$(query $device mode)" = "volatile" ]; then
             mount --move "$root" "$core"
         else
             return
         fi
     else
-        if [ "$(query $device mode)" = "read-only" ]; then
+        if [ "$(query $device mode)" = "volatile" ]; then
             local option="ro" directory="$core"
         else
             local option="rw" directory="$root/$(query $device mount_point)"
@@ -114,7 +114,7 @@ setup() { # mount a device
             exit 5
         fi
         
-        if [ "$(query $device mode)" = "read-write" ]; then
+        if [ "$(query $device mode)" = "persistent" ]; then
             return
         fi
     fi
