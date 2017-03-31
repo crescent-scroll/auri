@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/ash
 
-# Auri - A way to set up static Arch Linux machines
-# Copyright (C) 2016 Crescent Scroll
+# Auri - A way to set up volatile Arch Linux machines
+# Copyright (C) 2016-2017 Crescent Scroll
 # 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,14 +16,24 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-build() {
-    add_dir /mnt/auri/core
-    add_dir /mnt/auri/shell
+run_hook() {
+    auri_mount_handler() {
+        if [ "$(auri query root mode)" = "volatile" ]; then
+            rwopt="ro" default_mount_handler "$1"
+        else
+            rwopt="rw" default_mount_handler "$1"
+        fi
+    }
     
-    add_runscript
+    mount_handler="auri_mount_handler"
+    
+    if [ "$(auri query root mode)" = "volatile" ]; then
+        fsck_root() {
+            echo &> "/dev/null"
+        }
+    fi
 }
 
-help() {
-    echo 'This hook mounts a temporary filesystem on top of the read-only' \
-        'mounted root device.'
+run_latehook() {
+    auri setup
 }

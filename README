@@ -1,23 +1,23 @@
-Auri - A way to set up static Arch Linux machines
+Auri - A way to set up volatile Arch Linux machines
 
 
 What is Auri?
 
-Auri is a software package specifically developed for Arch Linux. It allows to
-boot complete setups from read-only filesystems, thus making them static.
+Auri is a software package specifically developed for Arch Linux. It allows for
+booting complete setups from temporary filesystems, thus making them volatile.
 
 
-When is Auri useful?
+Why is Auri useful?
 
-Blocking all write operations to the underlying devices by using read-only
-filesystems can be of advantage in several scenarios:
+Blocking all write operations to disk by using temporary filesystems on top of
+read-only mounted devices can be of advantage in several scenarios:
 
-- Single-board computers like the Raspberry Pi which utilize SD cards for
-  storage purposes are prone to data corruption and wearout. Preventing the
-  operating system from writing to disk effectively eliminates this problem.
+- Single-board computers like the Raspberry Pi usually utilize SD cards for
+  storage purposes which are prone to data corruption and wearout. Preventing
+  the operating system from writing to disk effectively eliminates this problem.
   
 - Embedded systems which are intended to serve a single purpose within a larger
-  device are often required to withstand power outages unharmed. Read-only
+  unit are often required to withstand power outages unharmed. Read-only
   filesystems provide a fresh installation at the beginning of each power cycle.
   
 - Generic setups can benefit from the possibility of making temporary changes to
@@ -27,12 +27,13 @@ filesystems can be of advantage in several scenarios:
 How does Auri work?
 
 Auri relies on the Linux kernel feature OverlayFS, which is an implementation of
-the Union Filesystem concept. In order to function properly, it provides an
-initial RAM filesystem that needs to be used in conjunction with the kernel.
+the Union Filesystem concept. In order to function properly, an initial RAM
+filesystem needs to be used in conjunction with the kernel.
 
-In early userspace, Auri mounts a temporary filesystem on top of the read-only
-mounted root device. This way all write operations are caught and stored in RAM
-until the system shuts down.
+In early userspace, Auri mounts devices as configured either in read-only or
+read-write mode before placing temporary filesystems on top of the read-only
+filesystems. This way, all written files are caught and stored in RAM until the
+system shuts down.
 
 
 How can Auri be installed?
@@ -43,9 +44,8 @@ manually or using the AUR helper of choice.
 
 How can Auri be activated?
 
-In order to use Auri, an initial RAM filesystem with the hook 'auri' needs to be
-generated and enabled in the kernel command line. Visit the Arch Linux Wiki for
-further reference.
+Visit https://github.com/crescent-scroll/auri/wiki for detailed instructions on
+how to configure Auri.
 
 
 Is Auri free software?
