@@ -16,7 +16,7 @@
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables --no-print-directory
 
-VERSION := 0.2.0-alpha
+VERSION := 0.3.0-beta
 
 SOURCES := $(shell find source -name "*.cc")
 OBJECTS := $(patsubst source/%.cc,build/%.o,${SOURCES})
